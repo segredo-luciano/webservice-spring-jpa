@@ -14,6 +14,8 @@ import com.javastudy.webservicejpa.repositories.UserRepository;
 import com.javastudy.webservicejpa.resources.exceptions.DatabaseException;
 import com.javastudy.webservicejpa.services.exceptions.ResourceNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UserService {
 
@@ -47,12 +49,17 @@ public class UserService {
 	}
 	
 	public User update(Long id, String name, String email, String phone) {
-		User existingUser = userRepository.getReferenceById(id);
+		try {
+			User existingUser = userRepository.getReferenceById(id);
+			
+			existingUser.setName(name);
+			existingUser.setEmail(email);
+			existingUser.setPhone(phone);
+			
+			return userRepository.save(existingUser);	
+		} catch(EntityNotFoundException enfe) {
+			throw new ResourceNotFoundException(id);
+		}
 		
-		existingUser.setName(name);
-		existingUser.setEmail(email);
-		existingUser.setPhone(phone);
-		
-		return userRepository.save(existingUser);
 	}
 }
