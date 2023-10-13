@@ -35,7 +35,13 @@ public class UserService {
 		userRepository.deleteById(id);
 	}
 	
-//	public User update(Long id, String name, String email, String phone, String password) {
-//		
-//	}
+	public User update(Long id, String name, String email, String phone) {
+		User existingUser = userRepository.getReferenceById(id);
+		
+		existingUser.setName(name);
+		existingUser.setEmail(email);
+		existingUser.setPhone(phone);
+		
+		return userRepository.save(existingUser);
+	}
 }
