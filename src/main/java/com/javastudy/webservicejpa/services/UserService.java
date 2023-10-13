@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.javastudy.webservicejpa.entities.User;
 import com.javastudy.webservicejpa.entities.vos.UserDTO;
 import com.javastudy.webservicejpa.repositories.UserRepository;
+import com.javastudy.webservicejpa.resources.exceptions.DatabaseException;
 import com.javastudy.webservicejpa.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -33,7 +36,14 @@ public class UserService {
 	}
 	
 	public void delete(Long id) {
-		userRepository.deleteById(id);
+		try {
+			userRepository.deleteById(id);	
+		} catch(EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException(id);
+		} catch(DataIntegrityViolationException de) {
+			throw new DatabaseException(de.getMessage());
+		}
+		
 	}
 	
 	public User update(Long id, String name, String email, String phone) {
