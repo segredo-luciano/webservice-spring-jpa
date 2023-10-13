@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.javastudy.webservicejpa.entities.User;
 import com.javastudy.webservicejpa.entities.vos.UserDTO;
 import com.javastudy.webservicejpa.repositories.UserRepository;
+import com.javastudy.webservicejpa.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class UserService {
@@ -22,7 +23,7 @@ public class UserService {
 	
 	public User findById(Long id) {
 		Optional<User> obj = userRepository.findById(id);
-		return obj.get();
+		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 	
 	public User save(UserDTO userDTO) {
